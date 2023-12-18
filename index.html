@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
+    <script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
     <title>Vite App</title>
   </head>
   <body>
-    <div id="app"></div>
+    <input id="current-note" value="" type="hidden" name="current-note">
+    <trix-editor input="current-note" class="trix-content"></trix-editor>
     <script type="module" src="/main.js"></script>
   </body>
 </html>
