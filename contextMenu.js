@@ -14,6 +14,13 @@ export function setupContextMenu() {
         },
       },
     ],
-    onClick() {},
+    onClick(context) {
+      console.log(1);
+      if (context.items.length == 1) {
+        const editorElement = document.getElementById("editor")
+        document.getElementById("current-note").value = context.items[0].id
+        editorElement.editor.insertString(context.items[0].id)
+      }
+    },
   });
 }
