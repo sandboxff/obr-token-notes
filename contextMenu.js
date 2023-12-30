@@ -58,3 +58,35 @@ const saveNote = () => {
 addEventListener("trix-blur", (e) => {
   saveNote();
 })
+
+addEventListener("trix-attachment-add", (e) => {
+  if (e.attachment.file && currentNote.value != "") {
+    const blob = new Blob([e.attachment.file])
+    const filename = String(Date.now()) + '.' + e.attachment.file.type.split('/')[1]
+    const formData = new FormData();
+    console.log(filename);
+    console.log(e.attachment.file.size)
+    formData.append('id', currentNote.value)
+    formData.append('file', blob, filename)
+    console.log(formData);
+    fetch('http://localhost:3001/attachment', {
+      method: 'POST',
+      body: formData
+    });
+  }
+})
+
+addEventListener("trix-attachment-remove", (e) => {
+  console.log("triggered")
+  if (e.attachment.file && currentNote.value != "") {
+    fetch('http://localhost:3001/attachment', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'DELETE',
+      body: JSON.stringify({id: currentNote.value, size: e.attachment.file.size})
+    });
+  }
+})
+

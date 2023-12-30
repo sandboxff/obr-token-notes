@@ -2,7 +2,9 @@ const express = require('express')
 const app = express()
 app.use(express.json())
 
+const upload = require('./middleware/upload')
 const fs = require('fs')
+const { log } = require('console')
 const dir = './localData/'
 
 fs.access(dir, (err) => {
@@ -35,6 +37,39 @@ app.post('/', (req, res) => {
             res.send('Data successfuly saved')
         }
     })
+})
+
+app.post('/attachment', upload.single('file'), (req, res) => {
+    console.log(req.body)
+    res.send('Attachment saved')
+})
+
+app.delete('/attachment', (req, res) => {
+    console.log(req.body)
+    try {
+        fs.readdir('./localData', (error, files) => {
+            if (error) {
+                return console.error(error)
+            }
+            files.forEach((file) => {
+                const fileStat = fs.statSync('./localData/' + file, (error) => {
+                    if (error) {
+                        console.error(error);
+                    }
+                })
+                console.log(fileStat);
+                if (file.includes(req.body.id) && fileStat.size == req.body.size) {
+                    fs.unlink('./localData/' + file, (error) => {
+                        if (error) {
+                            console.error(error);
+                        }
+                    })
+                }
+            })
+        })
+    } catch (error) {
+        console.error(error)
+    }
 })
 
 const PORT = 3001
