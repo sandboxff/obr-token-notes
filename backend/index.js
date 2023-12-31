@@ -16,6 +16,7 @@ fs.access(dir, (err) => {
 })
 
 app.get('/:id', (req, res) => {
+    deletionFlag = false
     fs.readFile(dir + req.params.id, (err, data) => {
         if (err) {
             res.status(404)
@@ -24,11 +25,32 @@ app.get('/:id', (req, res) => {
             res.send(data)
         }
     })
+    deletionFlag = true
+})
+
+app.get('/attachment/:id', (req, res) => {
+    fs.readdir(dir, async (error, files) => {
+        if (error) {
+            return console.error(error)
+        }
+        const attachments = []
+        files.forEach((file) => {
+            if (file != req.params.id && file.includes(req.params.id)) {
+                const data = fs.readFileSync('./localData/' + file, (error) => {
+                    if (error) {
+                        return console.error(error)
+                    }
+                    
+                })
+                attachments.push(new Buffer.from(data, 'base64').toString('base64'))
+            }
+        })
+        
+        res.send({attachments: attachments})
+    })
 })
 
 app.post('/', (req, res) => {
-
-    console.log(req.body)
     fs.writeFile(dir + req.body.id, req.body.content, 'utf8', (err) => {
         if (err) {
             res.status(400)
@@ -40,7 +62,6 @@ app.post('/', (req, res) => {
 })
 
 app.post('/attachment', upload.single('file'), (req, res) => {
-    console.log(req.body)
     res.send('Attachment saved')
 })
 
@@ -58,7 +79,7 @@ app.delete('/attachment', (req, res) => {
                     }
                 })
                 console.log(fileStat);
-                if (file.includes(req.body.id) && fileStat.size == req.body.size) {
+                if (file != req.body.id && file.includes(req.body.id)) {
                     fs.unlink('./localData/' + file, (error) => {
                         if (error) {
                             console.error(error);

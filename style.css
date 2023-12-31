@@ -11,6 +11,7 @@ body {
 .trix-button--icon-undo,
 .trix-button--icon-redo,
 .trix-button--icon-quote,
+.trix-button--icon-code,
 .trix-button-group--history-tools { display: none !important; }
 
 span .trix-button-group--history-tools {display: none;}
